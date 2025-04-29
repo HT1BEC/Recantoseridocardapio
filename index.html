@@ -1,220 +1,161 @@
-<!DOCTYPE html><html lang="pt-br">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pagamento Recanto do Seridó</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f8f1e7;
-      color: #2e4f3e;
+      background-color: #f8f5ef;
+      color: #333;
       margin: 0;
-      padding: 1rem;
+      padding: 0;
     }
-    .header {
-      background-color: #cfdace;
-      padding: 1rem;
+    header {
+      background-color: #cfd9c4;
       text-align: center;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-    }
-    .card {
-      background-color: #e3eddf;
-      border-radius: 12px;
       padding: 1rem;
-      margin: 0.5rem 0;
+      font-size: 1.8rem;
+      font-weight: bold;
+      border-radius: 0 0 16px 16px;
+    }
+    .container {
+      padding: 1rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    .item {
+      background-color: #e8efe3;
+      border-radius: 12px;
+      padding: 0.8rem;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .card h3 {
-      margin: 0;
+    .item span {
       font-size: 1rem;
     }
-    .quantity {
-      display: flex;
-      align-items: center;
+    .controls button {
+      margin: 0 5px;
     }
-    .quantity button {
-      background: #b9ccb5;
-      border: none;
-      padding: 0.3rem 0.7rem;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin: 0 0.3rem;
+    .total {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+      text-align: center;
     }
-    .total-section {
-      position: sticky;
-      top: 0;
-      background: #f8f1e7;
-      padding: 1rem;
-      z-index: 999;
-    }
-    textarea {
-      width: 100%;
-      height: 80px;
-      margin-top: 0.5rem;
-      border-radius: 6px;
-      padding: 0.5rem;
-    }
-    button.gerar {
-      background-color: #a5c9a1;
-      border: none;
+    #pixArea {
+      background-color: #f0f0f0;
       padding: 1rem;
       border-radius: 8px;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    #qrCode {
+      margin-top: 10px;
+    }
+    button {
+      padding: 0.5rem 1rem;
       font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      background-color: #a8c6a2;
+      color: #fff;
       cursor: pointer;
-      width: 100%;
-      margin: 0.5rem 0;
+    }
+    button:hover {
+      background-color: #8db28c;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>Pagamento Recanto do Seridó</h1>
-  </div>  <div class="total-section">
-    <h2>Total: R$ <span id="total">0.00</span></h2>
-    <button class="gerar" onclick="gerarPix()">Gerar Código Pix</button>
-    <textarea id="pixcopiacola" readonly></textarea>
-    <button class="gerar" onclick="copiarCodigo()">Copiar Código Pix</button>
-  </div>  <div id="itens"></div>  <script>
-    const produtos = [
-      { categoria: "Petiscos", itens: [
-        { nome: "BATATA FRITA", preco: 14 },
-        { nome: "FILÉ COM FRITAS", preco: 37 },
-        { nome: "CALABRESA COM FRITAS", preco: 29 },
-        { nome: "CARNE DE SOL COM MACAXEIRA", preco: 35 },
-        { nome: "FRANGO A MILANESA", preco: 25 },
-        { nome: "FRANGO A PASSARINHO", preco: 20 },
-      ]},
-      { categoria: "Bebidas", itens: [
-        { nome: "ÁGUA SEM GÁS 500ML", preco: 2 },
-        { nome: "ÁGUA COM GÁS 500ML", preco: 2.5 },
-        { nome: "ÁGUA SEM GÁS 1,5L", preco: 4 },
-        { nome: "LIMONETO H2OH", preco: 6 },
-        { nome: "REFRIGERANTE LATA", preco: 4.5 },
-        { nome: "REFRIGERANTE IL", preco: 8.5 },
-        { nome: "REFRIGERANTE 2L", preco: 13 },
-        { nome: "COCO VERDE", preco: 4 },
-        { nome: "RED BULL", preco: 12 },
-        { nome: "MONSTER 473ML", preco: 13 },
-      ]},
-      { categoria: "Cervejas", itens: [
-        { nome: "HEINEKEN LONG NECK", preco: 8 },
-        { nome: "HEINEKEN 0%", preco: 8 },
-        { nome: "ORIGINAL 600ML", preco: 11 },
-        { nome: "SPARTEN 600ML", preco: 11 },
-        { nome: "HEINKEN 600ML", preco: 14 },
-        { nome: "BRAHMA DUPLO MALTE 600 ML", preco: 9 },
-      ]},
-      { categoria: "Bebidas Quentes", itens: [
-        { nome: "DOSE CHIVAS", preco: 12 },
-        { nome: "DOSE BALLANTINES", preco: 12 },
-        { nome: "DOSE OLD PARR", preco: 12 },
-        { nome: "DOSE LICOR AMARULA", preco: 10 },
-      ]}
-    ];
+  <header>Pagamento Recanto do Seridó</header>
+  <div class="container">
+    <div class="total">
+      Total: R$ <span id="total">0.00</span>
+      <br>
+      <button onclick="gerarPagamento()">Gerar Pagamento</button>
+    </div><div id="pixArea" style="display:none;">
+  <div><strong>Pix Copia e Cola:</strong></div>
+  <textarea id="pixCode" rows="3" style="width:100%; margin-top: 5px;"></textarea>
+  <button onclick="copiarPix()">Copiar</button>
+  <div id="qrCode"></div>
+</div>
 
-    const carrinho = {};
+<h3>Petiscos</h3>
+<div id="itens">
+  <div class="item"><span>Batata Frita - R$14.00</span><div class="controls"><button onclick="alterarQtd('Batata Frita', 14.00, 1)">+</button><button onclick="alterarQtd('Batata Frita', 14.00, -1)">-</button></div></div>
+  <div class="item"><span>Filé com Fritas - R$37.00</span><div class="controls"><button onclick="alterarQtd('Filé com Fritas', 37.00, 1)">+</button><button onclick="alterarQtd('Filé com Fritas', 37.00, -1)">-</button></div></div>
+  <div class="item"><span>Calabresa com Fritas - R$29.00</span><div class="controls"><button onclick="alterarQtd('Calabresa com Fritas', 29.00, 1)">+</button><button onclick="alterarQtd('Calabresa com Fritas', 29.00, -1)">-</button></div></div>
+  <div class="item"><span>Carne de Sol com Macaxeira - R$35.00</span><div class="controls"><button onclick="alterarQtd('Carne de Sol com Macaxeira', 35.00, 1)">+</button><button onclick="alterarQtd('Carne de Sol com Macaxeira', 35.00, -1)">-</button></div></div>
+  <div class="item"><span>Frango à Milanesa - R$25.00</span><div class="controls"><button onclick="alterarQtd('Frango à Milanesa', 25.00, 1)">+</button><button onclick="alterarQtd('Frango à Milanesa', 25.00, -1)">-</button></div></div>
+  <div class="item"><span>Frango à Passarinho - R$20.00</span><div class="controls"><button onclick="alterarQtd('Frango à Passarinho', 20.00, 1)">+</button><button onclick="alterarQtd('Frango à Passarinho', 20.00, -1)">-</button></div></div>
 
-    function renderItens() {
-      const container = document.getElementById('itens');
-      container.innerHTML = '';
-      produtos.forEach(cat => {
-        const titulo = document.createElement('h2');
-        titulo.innerText = cat.categoria;
-        container.appendChild(titulo);
-        cat.itens.forEach(item => {
-          carrinho[item.nome] = 0;
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <h3>${item.nome} - R$ ${item.preco.toFixed(2)}</h3>
-            <div class="quantity">
-              <button onclick="atualizarQtd('${item.nome}', -1, ${item.preco})">-</button>
-              <span id="qtd-${item.nome}">0</span>
-              <button onclick="atualizarQtd('${item.nome}', 1, ${item.preco})">+</button>
-            </div>
-          `;
-          container.appendChild(card);
-        });
-      });
-    }
+  <h3>Bebidas</h3>
+  <div class="item"><span>Água sem Gás 500ml - R$2.00</span><div class="controls"><button onclick="alterarQtd('Água sem Gás 500ml', 2.00, 1)">+</button><button onclick="alterarQtd('Água sem Gás 500ml', 2.00, -1)">-</button></div></div>
+  <div class="item"><span>Água com Gás 500ml - R$2.50</span><div class="controls"><button onclick="alterarQtd('Água com Gás 500ml', 2.50, 1)">+</button><button onclick="alterarQtd('Água com Gás 500ml', 2.50, -1)">-</button></div></div>
+  <div class="item"><span>Água sem Gás 1,5L - R$4.00</span><div class="controls"><button onclick="alterarQtd('Água sem Gás 1,5L', 4.00, 1)">+</button><button onclick="alterarQtd('Água sem Gás 1,5L', 4.00, -1)">-</button></div></div>
+  <div class="item"><span>Limoneto H2OH - R$6.00</span><div class="controls"><button onclick="alterarQtd('Limoneto H2OH', 6.00, 1)">+</button><button onclick="alterarQtd('Limoneto H2OH', 6.00, -1)">-</button></div></div>
+  <div class="item"><span>Refrigerante Lata - R$4.50</span><div class="controls"><button onclick="alterarQtd('Refrigerante Lata', 4.50, 1)">+</button><button onclick="alterarQtd('Refrigerante Lata', 4.50, -1)">-</button></div></div>
+  <div class="item"><span>Refrigerante 1L - R$8.50</span><div class="controls"><button onclick="alterarQtd('Refrigerante 1L', 8.50, 1)">+</button><button onclick="alterarQtd('Refrigerante 1L', 8.50, -1)">-</button></div></div>
+  <div class="item"><span>Refrigerante 2L - R$13.00</span><div class="controls"><button onclick="alterarQtd('Refrigerante 2L', 13.00, 1)">+</button><button onclick="alterarQtd('Refrigerante 2L', 13.00, -1)">-</button></div></div>
+  <div class="item"><span>Coco Verde - R$4.00</span><div class="controls"><button onclick="alterarQtd('Coco Verde', 4.00, 1)">+</button><button onclick="alterarQtd('Coco Verde', 4.00, -1)">-</button></div></div>
+  <div class="item"><span>Red Bull - R$12.00</span><div class="controls"><button onclick="alterarQtd('Red Bull', 12.00, 1)">+</button><button onclick="alterarQtd('Red Bull', 12.00, -1)">-</button></div></div>
+  <div class="item"><span>Monster 473ml - R$13.00</span><div class="controls"><button onclick="alterarQtd('Monster 473ml', 13.00, 1)">+</button><button onclick="alterarQtd('Monster 473ml', 13.00, -1)">-</button></div></div>
 
-    function atualizarQtd(nome, delta, preco) {
-      carrinho[nome] = Math.max(0, carrinho[nome] + delta);
-      document.getElementById(qtd-${nome}).innerText = carrinho[nome];
+  <h3>Cervejas</h3>
+  <div class="item"><span>Heineken Long Neck - R$8.00</span><div class="controls"><button onclick="alterarQtd('Heineken Long Neck', 8.00, 1)">+</button><button onclick="alterarQtd('Heineken Long Neck', 8.00, -1)">-</button></div></div>
+  <div class="item"><span>Heineken 0% - R$8.00</span><div class="controls"><button onclick="alterarQtd('Heineken 0%', 8.00, 1)">+</button><button onclick="alterarQtd('Heineken 0%', 8.00, -1)">-</button></div></div>
+  <div class="item"><span>Original 600ml - R$11.00</span><div class="controls"><button onclick="alterarQtd('Original 600ml', 11.00, 1)">+</button><button onclick="alterarQtd('Original 600ml', 11.00, -1)">-</button></div></div>
+  <div class="item"><span>Sparten 600ml - R$11.00</span><div class="controls"><button onclick="alterarQtd('Sparten 600ml', 11.00, 1)">+</button><button onclick="alterarQtd('Sparten 600ml', 11.00, -1)">-</button></div></div>
+  <div class="item"><span>Heineken 600ml - R$14.00</span><div class="controls"><button onclick="alterarQtd('Heineken 600ml', 14.00, 1)">+</button><button onclick="alterarQtd('Heineken 600ml', 14.00, -1)">-</button></div></div>
+  <div class="item"><span>Brahma Duplo Malte 600ml - R$9.00</span><div class="controls"><button onclick="alterarQtd('Brahma Duplo Malte 600ml', 9.00, 1)">+</button><button onclick="alterarQtd('Brahma Duplo Malte 600ml', 9.00, -1)">-</button></div></div>
+
+  <h3>Bebidas Quentes</h3>
+  <div class="item"><span>Dose Chivas - R$12.00</span><div class="controls"><button onclick="alterarQtd('Dose Chivas', 12.00, 1)">+</button><button onclick="alterarQtd('Dose Chivas', 12.00, -1)">-</button></div></div>
+  <div class="item"><span>Dose Ballantines - R$12.00</span><div class="controls"><button onclick="alterarQtd('Dose Ballantines', 12.00, 1)">+</button><button onclick="alterarQtd('Dose Ballantines', 12.00, -1)">-</button></div></div>
+  <div class="item"><span>Dose Old Parr - R$12.00</span><div class="controls"><button onclick="alterarQtd('Dose Old Parr', 12.00, 1)">+</button><button onclick="alterarQtd('Dose Old Parr', 12.00, -1)">-</button></div></div>
+  <div class="item"><span>Dose Licor Amarula - R$10.00</span><div class="controls"><button onclick="alterarQtd('Dose Licor Amarula', 10.00, 1)">+</button><button onclick="alterarQtd('Dose Licor Amarula', 10.00, -1)">-</button></div></div>
+</div>
+
+  </div>  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>  <script>
+    let total = 0;
+    let pedidos = [];
+
+    function alterarQtd(nome, valor, qtd) {
+      const index = pedidos.findIndex(item => item.nome === nome);
+      if (index > -1) {
+        pedidos[index].quantidade += qtd;
+        if (pedidos[index].quantidade <= 0) pedidos.splice(index, 1);
+      } else if (qtd > 0) {
+        pedidos.push({ nome, valor, quantidade: qtd });
+      }
       calcularTotal();
     }
 
     function calcularTotal() {
-      let total = 0;
-      produtos.forEach(cat => {
-        cat.itens.forEach(item => {
-          total += carrinho[item.nome] * item.preco;
-        });
-      });
+      total = pedidos.reduce((sum, item) => sum + item.valor * item.quantidade, 0);
       document.getElementById('total').innerText = total.toFixed(2);
     }
 
-    function gerarPix() {
-      const chave = "ht1bec@gmail.com";
-      const nome = "JADRE RENAUD DUARTE";
-      const cidade = "Caicó";
-      const valor = parseFloat(document.getElementById('total').innerText).toFixed(2);
-      const payload = montaPayload(chave, nome, cidade, valor);
-      document.getElementById('pixcopiacola').value = payload;
+    function gerarPagamento() {
+      if (total === 0) return alert('Selecione ao menos um item!');
+      const payload = gerarPix('ht1bec@gmail.com', 'JADRE RENAUD DUARTE', 'CAICO', total);
+      document.getElementById('pixCode').value = payload;
+      document.getElementById('pixArea').style.display = 'block';
+      QRCode.toCanvas(document.getElementById("qrCode"), payload);
     }
 
-    function copiarCodigo() {
-      const campo = document.getElementById('pixcopiacola');
-      campo.select();
+    function gerarPix(chave, nome, cidade, valor) {
+      const payload = `PIX PARA ${nome} - ${chave} - R$ ${valor.toFixed(2)}`;
+      return payload;
+    }
+
+    function copiarPix() {
+      const pix = document.getElementById('pixCode');
+      pix.select();
       document.execCommand('copy');
       alert('Código Pix copiado!');
     }
-
-    function montaPayload(chave, nome, cidade, valor) {
-      const payloadFormatIndicator = "000201";
-      const merchantAccountInfo = "26" + ("0014BR.GOV.BCB.PIX0114" + chave).length + "BR.GOV.BCB.PIX0114" + chave;
-      const merchantCategoryCode = "52040000";
-      const transactionCurrency = "5303986";
-      const transactionAmount = valor ? "54" + valor.length + valor : "";
-      const countryCode = "5802BR";
-      const merchantName = "59" + nome.length + nome;
-      const merchantCity = "60" + cidade.length + cidade;
-      const additionalData = "62070503***";
-
-      let payloadSemCRC = payloadFormatIndicator +
-        merchantAccountInfo +
-        merchantCategoryCode +
-        transactionCurrency +
-        transactionAmount +
-        countryCode +
-        merchantName +
-        merchantCity +
-        additionalData +
-        "6304";
-
-      const crc = crc16(payloadSemCRC);
-      return payloadSemCRC + crc;
-    }
-
-    function crc16(str) {
-      let crc = 0xFFFF;
-      for (let c of str) {
-        crc ^= c.charCodeAt(0) << 8;
-        for (let i = 0; i < 8; i++) {
-          if ((crc & 0x8000) !== 0) {
-            crc = (crc << 1) ^ 0x1021;
-          } else {
-            crc <<= 1;
-          }
-          crc &= 0xFFFF;
-        }
-      }
-      return crc.toString(16).toUpperCase().padStart(4, '0');
-    }
-
-    renderItens();
   </script></body>
 </html>
