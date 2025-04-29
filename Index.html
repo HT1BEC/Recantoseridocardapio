@@ -1,0 +1,161 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagamento Recanto do Seridó</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f5ef;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #cfd9c4;
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.8rem;
+      font-weight: bold;
+      border-radius: 0 0 16px 16px;
+    }
+    .container {
+      padding: 1rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    .item {
+      background-color: #e8efe3;
+      border-radius: 12px;
+      padding: 0.8rem;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .item span {
+      font-size: 1rem;
+    }
+    .controls button {
+      margin: 0 5px;
+    }
+    .total {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+    #pixArea {
+      background-color: #f0f0f0;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    #qrCode {
+      margin-top: 10px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      background-color: #a8c6a2;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #8db28c;
+    }
+  </style>
+</head>
+<body>
+  <header>Pagamento Recanto do Seridó</header>
+  <div class="container">
+    <div class="total">
+      Total: R$ <span id="total">0.00</span>
+      <br>
+      <button onclick="gerarPagamento()">Gerar Pagamento</button>
+    </div><div id="pixArea" style="display:none;">
+  <div><strong>Pix Copia e Cola:</strong></div>
+  <textarea id="pixCode" rows="3" style="width:100%; margin-top: 5px;"></textarea>
+  <button onclick="copiarPix()">Copiar</button>
+  <div id="qrCode"></div>
+</div>
+
+<h3>Petiscos</h3>
+<div id="itens">
+  <div class="item"><span>Batata Frita - R$14.00</span><div class="controls"><button onclick="alterarQtd('Batata Frita', 14.00, 1)">+</button><button onclick="alterarQtd('Batata Frita', 14.00, -1)">-</button></div></div>
+  <div class="item"><span>Filé com Fritas - R$37.00</span><div class="controls"><button onclick="alterarQtd('Filé com Fritas', 37.00, 1)">+</button><button onclick="alterarQtd('Filé com Fritas', 37.00, -1)">-</button></div></div>
+  <div class="item"><span>Calabresa com Fritas - R$29.00</span><div class="controls"><button onclick="alterarQtd('Calabresa com Fritas', 29.00, 1)">+</button><button onclick="alterarQtd('Calabresa com Fritas', 29.00, -1)">-</button></div></div>
+  <div class="item"><span>Carne de Sol com Macaxeira - R$35.00</span><div class="controls"><button onclick="alterarQtd('Carne de Sol com Macaxeira', 35.00, 1)">+</button><button onclick="alterarQtd('Carne de Sol com Macaxeira', 35.00, -1)">-</button></div></div>
+  <div class="item"><span>Frango à Milanesa - R$25.00</span><div class="controls"><button onclick="alterarQtd('Frango à Milanesa', 25.00, 1)">+</button><button onclick="alterarQtd('Frango à Milanesa', 25.00, -1)">-</button></div></div>
+  <div class="item"><span>Frango à Passarinho - R$20.00</span><div class="controls"><button onclick="alterarQtd('Frango à Passarinho', 20.00, 1)">+</button><button onclick="alterarQtd('Frango à Passarinho', 20.00, -1)">-</button></div></div>
+
+  <h3>Bebidas</h3>
+  <div class="item"><span>Água sem Gás 500ml - R$2.00</span><div class="controls"><button onclick="alterarQtd('Água sem Gás 500ml', 2.00, 1)">+</button><button onclick="alterarQtd('Água sem Gás 500ml', 2.00, -1)">-</button></div></div>
+  <div class="item"><span>Água com Gás 500ml - R$2.50</span><div class="controls"><button onclick="alterarQtd('Água com Gás 500ml', 2.50, 1)">+</button><button onclick="alterarQtd('Água com Gás 500ml', 2.50, -1)">-</button></div></div>
+  <div class="item"><span>Água sem Gás 1,5L - R$4.00</span><div class="controls"><button onclick="alterarQtd('Água sem Gás 1,5L', 4.00, 1)">+</button><button onclick="alterarQtd('Água sem Gás 1,5L', 4.00, -1)">-</button></div></div>
+  <div class="item"><span>Limoneto H2OH - R$6.00</span><div class="controls"><button onclick="alterarQtd('Limoneto H2OH', 6.00, 1)">+</button><button onclick="alterarQtd('Limoneto H2OH', 6.00, -1)">-</button></div></div>
+  <div class="item"><span>Refrigerante Lata - R$4.50</span><div class="controls"><button onclick="alterarQtd('Refrigerante Lata', 4.50, 1)">+</button><button onclick="alterarQtd('Refrigerante Lata', 4.50, -1)">-</button></div></div>
+  <div class="item"><span>Refrigerante 1L - R$8.50</span><div class="controls"><button onclick="alterarQtd('Refrigerante 1L', 8.50, 1)">+</button><button onclick="alterarQtd('Refrigerante 1L', 8.50, -1)">-</button></div></div>
+  <div class="item"><span>Refrigerante 2L - R$13.00</span><div class="controls"><button onclick="alterarQtd('Refrigerante 2L', 13.00, 1)">+</button><button onclick="alterarQtd('Refrigerante 2L', 13.00, -1)">-</button></div></div>
+  <div class="item"><span>Coco Verde - R$4.00</span><div class="controls"><button onclick="alterarQtd('Coco Verde', 4.00, 1)">+</button><button onclick="alterarQtd('Coco Verde', 4.00, -1)">-</button></div></div>
+  <div class="item"><span>Red Bull - R$12.00</span><div class="controls"><button onclick="alterarQtd('Red Bull', 12.00, 1)">+</button><button onclick="alterarQtd('Red Bull', 12.00, -1)">-</button></div></div>
+  <div class="item"><span>Monster 473ml - R$13.00</span><div class="controls"><button onclick="alterarQtd('Monster 473ml', 13.00, 1)">+</button><button onclick="alterarQtd('Monster 473ml', 13.00, -1)">-</button></div></div>
+
+  <h3>Cervejas</h3>
+  <div class="item"><span>Heineken Long Neck - R$8.00</span><div class="controls"><button onclick="alterarQtd('Heineken Long Neck', 8.00, 1)">+</button><button onclick="alterarQtd('Heineken Long Neck', 8.00, -1)">-</button></div></div>
+  <div class="item"><span>Heineken 0% - R$8.00</span><div class="controls"><button onclick="alterarQtd('Heineken 0%', 8.00, 1)">+</button><button onclick="alterarQtd('Heineken 0%', 8.00, -1)">-</button></div></div>
+  <div class="item"><span>Original 600ml - R$11.00</span><div class="controls"><button onclick="alterarQtd('Original 600ml', 11.00, 1)">+</button><button onclick="alterarQtd('Original 600ml', 11.00, -1)">-</button></div></div>
+  <div class="item"><span>Sparten 600ml - R$11.00</span><div class="controls"><button onclick="alterarQtd('Sparten 600ml', 11.00, 1)">+</button><button onclick="alterarQtd('Sparten 600ml', 11.00, -1)">-</button></div></div>
+  <div class="item"><span>Heineken 600ml - R$14.00</span><div class="controls"><button onclick="alterarQtd('Heineken 600ml', 14.00, 1)">+</button><button onclick="alterarQtd('Heineken 600ml', 14.00, -1)">-</button></div></div>
+  <div class="item"><span>Brahma Duplo Malte 600ml - R$9.00</span><div class="controls"><button onclick="alterarQtd('Brahma Duplo Malte 600ml', 9.00, 1)">+</button><button onclick="alterarQtd('Brahma Duplo Malte 600ml', 9.00, -1)">-</button></div></div>
+
+  <h3>Bebidas Quentes</h3>
+  <div class="item"><span>Dose Chivas - R$12.00</span><div class="controls"><button onclick="alterarQtd('Dose Chivas', 12.00, 1)">+</button><button onclick="alterarQtd('Dose Chivas', 12.00, -1)">-</button></div></div>
+  <div class="item"><span>Dose Ballantines - R$12.00</span><div class="controls"><button onclick="alterarQtd('Dose Ballantines', 12.00, 1)">+</button><button onclick="alterarQtd('Dose Ballantines', 12.00, -1)">-</button></div></div>
+  <div class="item"><span>Dose Old Parr - R$12.00</span><div class="controls"><button onclick="alterarQtd('Dose Old Parr', 12.00, 1)">+</button><button onclick="alterarQtd('Dose Old Parr', 12.00, -1)">-</button></div></div>
+  <div class="item"><span>Dose Licor Amarula - R$10.00</span><div class="controls"><button onclick="alterarQtd('Dose Licor Amarula', 10.00, 1)">+</button><button onclick="alterarQtd('Dose Licor Amarula', 10.00, -1)">-</button></div></div>
+</div>
+
+  </div>  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>  <script>
+    let total = 0;
+    let pedidos = [];
+
+    function alterarQtd(nome, valor, qtd) {
+      const index = pedidos.findIndex(item => item.nome === nome);
+      if (index > -1) {
+        pedidos[index].quantidade += qtd;
+        if (pedidos[index].quantidade <= 0) pedidos.splice(index, 1);
+      } else if (qtd > 0) {
+        pedidos.push({ nome, valor, quantidade: qtd });
+      }
+      calcularTotal();
+    }
+
+    function calcularTotal() {
+      total = pedidos.reduce((sum, item) => sum + item.valor * item.quantidade, 0);
+      document.getElementById('total').innerText = total.toFixed(2);
+    }
+
+    function gerarPagamento() {
+      if (total === 0) return alert('Selecione ao menos um item!');
+      const payload = gerarPix('ht1bec@gmail.com', 'JADRE RENAUD DUARTE', 'CAICO', total);
+      document.getElementById('pixCode').value = payload;
+      document.getElementById('pixArea').style.display = 'block';
+      QRCode.toCanvas(document.getElementById("qrCode"), payload);
+    }
+
+    function gerarPix(chave, nome, cidade, valor) {
+      const payload = `PIX PARA ${nome} - ${chave} - R$ ${valor.toFixed(2)}`;
+      return payload;
+    }
+
+    function copiarPix() {
+      const pix = document.getElementById('pixCode');
+      pix.select();
+      document.execCommand('copy');
+      alert('Código Pix copiado!');
+    }
+  </script></body>
+</html>
